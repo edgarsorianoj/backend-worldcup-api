@@ -8,6 +8,7 @@ from src.selections.application.create_selection import (
 from src.selections.application.get_all_selections import GetAllSelections
 from src.selections.application.get_selection_by_id import GetSelectionById
 from src.selections.application.update_selection import UpdateSelection
+from src.selections.application.delete_selection import DeleteSelection
 from src.selections.infraestructure.repositories import InMemorySelectionRepository
 
 
@@ -110,3 +111,17 @@ async def update_selection(id: int, payload: SelectionPayload):
         )
 
     return selection_to_response(selection)
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_selection(id: int):
+
+    selection = GetSelectionById(repository).execute(id)
+
+    if selection is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Selection not found"
+        )
+
+    DeleteSelection(repository).execute(id)

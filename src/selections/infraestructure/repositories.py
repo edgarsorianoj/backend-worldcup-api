@@ -31,8 +31,7 @@ class InMemorySelectionRepository(SelectionRepository):
                 return
 
     def delete(self, id: int) -> None:
-        self._selections = [
-            selection
-            for selection in self._selections
-            if selection.id() != id
-        ]
+        selection = self.get_by_id(id)
+
+        if selection is not None:
+            self._selections.remove(selection)
