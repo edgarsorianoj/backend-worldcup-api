@@ -19,7 +19,10 @@ class CreateSelection:
     def __init__(self, repository: SelectionRepository):
         self.repository = repository
 
-    def execute(self, command: CreateSelectionCommand) -> Selection:
+    def execute(
+        self,
+        command: CreateSelectionCommand
+    ) -> Selection:
 
         selection = Selection(
             country=command.country,
