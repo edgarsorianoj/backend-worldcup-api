@@ -6,8 +6,12 @@ class InMemorySelectionRepository(SelectionRepository):
 
     def __init__(self):
         self._selections: list[Selection] = []
+        self._next_id = 1
 
     def create(self, selection: Selection) -> None:
+        selection.set_id(self._next_id)
+        self._next_id += 1
+
         self._selections.append(selection)
 
     def get_all(self) -> list[Selection]:

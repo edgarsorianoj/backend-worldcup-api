@@ -37,3 +37,22 @@ class Selection:
 
     def flag(self) -> str:
         return self._flag
+    
+    def set_id(self, id: int) -> None:
+        self._id = id
+
+    def update(
+        self,
+        country: str,
+        confederation: str,
+        captain: str,
+        coach: str,
+        world_cups: int,
+        flag: str,
+    ) -> None:
+        self._country = country
+        self._confederation = confederation
+        self._captain = captain
+        self._coach = coach
+        self._world_cups = world_cups
+        self._flag = flag
