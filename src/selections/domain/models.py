@@ -1,3 +1,6 @@
+from src.selections.domain.value_objects import SelectionFlag
+
+
 class Selection:
     def __init__(
         self,
@@ -6,7 +9,7 @@ class Selection:
         captain: str,
         coach: str,
         world_cups: int,
-        flag: str,
+        flag: SelectionFlag,
         id: int | None = None,
     ):
         self._id = id
@@ -35,7 +38,7 @@ class Selection:
     def world_cups(self) -> int:
         return self._world_cups
 
-    def flag(self) -> str:
+    def flag(self) -> SelectionFlag:
         return self._flag
     
     def set_id(self, id: int) -> None:
@@ -48,8 +51,9 @@ class Selection:
         captain: str,
         coach: str,
         world_cups: int,
-        flag: str,
+        flag: SelectionFlag,
     ) -> None:
+        
         self._country = country
         self._confederation = confederation
         self._captain = captain

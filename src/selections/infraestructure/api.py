@@ -5,9 +5,14 @@ from src.selections.application.create_selection import (
     CreateSelection,
     CreateSelectionCommand,
 )
+
 from src.selections.application.get_all_selections import GetAllSelections
 from src.selections.application.get_selection_by_id import GetSelectionById
-from src.selections.application.update_selection import UpdateSelection
+from src.selections.application.update_selection import (
+    UpdateSelection,
+    UpdateSelectionCommand,
+)
+
 from src.selections.application.delete_selection import DeleteSelection
 from src.selections.infraestructure.repositories import InMemorySelectionRepository
 
@@ -45,7 +50,7 @@ def selection_to_response(selection):
         captain=selection.captain(),
         coach=selection.coach(),
         world_cups=selection.world_cups(),
-        flag=selection.flag(),
+        flag=selection.flag().value,
     )
 
 
@@ -95,13 +100,15 @@ async def get_selection(id: int):
 async def update_selection(id: int, payload: SelectionPayload):
 
     selection = UpdateSelection(repository).execute(
-        id=id,
-        country=payload.country,
-        confederation=payload.confederation,
-        captain=payload.captain,
-        coach=payload.coach,
-        world_cups=payload.world_cups,
-        flag=payload.flag,
+        UpdateSelectionCommand(
+            id=id,
+            country=payload.country,
+            confederation=payload.confederation,
+            captain=payload.captain,
+            coach=payload.coach,
+            world_cups=payload.world_cups,
+            flag=payload.flag,
+        )
     )
 
     if selection is None:

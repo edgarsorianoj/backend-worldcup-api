@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from src.selections.domain.models import Selection
 from src.selections.domain.repositories import SelectionRepository
+from src.selections.domain.value_objects import SelectionFlag
 
 
 @dataclass
@@ -30,7 +31,7 @@ class CreateSelection:
             captain=command.captain,
             coach=command.coach,
             world_cups=command.world_cups,
-            flag=command.flag,
+            flag=SelectionFlag(value=command.flag),
         )
 
         self.repository.create(selection)

@@ -3,3 +3,6 @@ class DomainError(Exception):
 
 class SelectionNotFound(DomainError):
     pass
+
+class SelectionFlagNotValid(DomainError):
+    pass
