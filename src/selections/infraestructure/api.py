@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
 from src.selections.application.create_selection import (
@@ -47,7 +47,7 @@ def selection_to_response(selection):
     )
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_selection(payload: SelectionPayload):
 
     selection = CreateSelection(repository).execute(
