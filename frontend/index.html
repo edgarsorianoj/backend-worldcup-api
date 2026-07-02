@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="World Cup 2026 — Dashboard minimalista de selecciones" />
+    <meta name="theme-color" content="#0a0e1a" />
+    <title>World Cup 2026 · Dashboard</title>
+    <link rel="preconnect" href="https://flagcdn.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <!-- Barra de progreso de carga (fetch) -->
+    <div class="progress-bar" id="progressBar" aria-hidden="true">
+        <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- Barra de progreso de scroll -->
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true">
+        <div class="scroll-progress__fill"></div>
+    </div>
+
+    <!-- HEADER + NAV -->
+    <header class="site-header">
+        <nav class="nav" aria-label="Navegación principal">
+            <a class="brand" href="#top" aria-label="Inicio World Cup">
+                <span class="brand__logo" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" width="20" height="20">
+                        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <path d="M16 4 L19 12 L27 12 L21 17 L23 25 L16 20 L9 25 L11 17 L5 12 L13 12 Z" fill="currentColor"/>
+                    </svg>
+                </span>
+                <span class="brand__text">World Cup 2026</span>
+            </a>
+
+            <ul class="nav__links" id="navLinks" role="list">
+                <li><a href="#selections" class="nav__link nav__link--active" data-link>
+                    <span class="nav__link-num">01</span> Selecciones
+                </a></li>
+                <li><a href="#stats" class="nav__link" data-link>
+                    <span class="nav__link-num">02</span> Estadísticas
+                </a></li>
+                <li><a href="#about" class="nav__link" data-link>
+                    <span class="nav__link-num">03</span> Acerca
+                </a></li>
+            </ul>
+
+            <div class="nav__actions">
+                <kbd class="kbd" title="Atajo: R para recargar">R</kbd>
+                <kbd class="kbd" title="Atajo: / para buscar">/</kbd>
+                <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+                    <span></span><span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main id="top" class="layout">
+        <!-- HERO minimalista -->
+        <section class="hero" aria-labelledby="heroTitle">
+            <div class="hero__head">
+                <span class="hero__eyebrow">
+                    <span class="hero__dot" aria-hidden="true"></span>
+                    <span>En vivo · Temporada 2026</span>
+                </span>
+                <h1 id="heroTitle" class="hero__title">
+                    Selecciones <span class="hero__title-accent">clasificadas</span>
+                </h1>
+                <p class="hero__desc">
+                    Explorá las 48 selecciones nacionales, sus confederaciones, capitanes
+                    y palmarés histórico. Datos en vivo desde la API.
+                </p>
+            </div>
+
+            <div class="hero__meta" id="stats" aria-label="Resumen">
+                <div class="stat">
+                    <span class="stat__label">Selecciones</span>
+                    <strong class="stat__value" id="totalSelections" data-count>0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat__label">Confederaciones</span>
+                    <strong class="stat__value" id="totalConfederations" data-count>0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat__label">Campeones</span>
+                    <strong class="stat__value" id="totalChampions" data-count>0</strong>
+                </div>
+                <div class="stat stat--update">
+                    <span class="stat__label">Actualizado</span>
+                    <strong class="stat__value stat__value--text" id="lastUpdate">—</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BREADCRUMB + CHIPS DE FILTROS -->
+        <nav class="breadcrumbs" aria-label="Filtros activos">
+            <ol class="breadcrumbs__list" id="breadcrumbList">
+                <li class="breadcrumbs__item">
+                    <span class="breadcrumbs__crumb">Inicio</span>
+                </li>
+                <li class="breadcrumbs__item" aria-current="page">
+                    <span class="breadcrumbs__crumb">Selecciones</span>
+                </li>
+            </ol>
+            <div class="active-filters" id="activeFilters" hidden>
+                <span class="active-filters__label">Filtros:</span>
+                <div class="active-filters__chips" id="activeChips"></div>
+                <button class="active-filters__clear" id="clearAllChips" type="button">
+                    Limpiar todo
+                </button>
+            </div>
+        </nav>
+
+        <!-- TOOLBAR -->
+        <section class="toolbar" aria-label="Filtros y búsqueda">
+            <div class="toolbar__search">
+                <svg class="toolbar__search-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input
+                    type="search"
+                    id="searchInput"
+                    class="toolbar__input"
+                    placeholder="Buscar país… (presioná /)"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+                <button
+                    type="button"
+                    class="toolbar__clear"
+                    id="searchClear"
+                    aria-label="Limpiar búsqueda"
+                    hidden
+                >×</button>
+            </div>
+
+            <div class="toolbar__select-wrap">
+                <select id="confederationFilter" class="toolbar__select" aria-label="Filtrar por confederación">
+                    <option value="">Todas las confederaciones</option>
+                </select>
+                <svg class="toolbar__select-icon" viewBox="0 0 12 8" width="10" height="6" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="toolbar__select-wrap">
+                <select id="sortBy" class="toolbar__select" aria-label="Ordenar">
+                    <option value="country">Ordenar: A–Z</option>
+                    <option value="world_cups">Más trofeos</option>
+                    <option value="confederation">Confederación</option>
+                </select>
+                <svg class="toolbar__select-icon" viewBox="0 0 12 8" width="10" height="6" aria-hidden="true">
+                    <path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <button id="reloadBtn" class="btn btn--icon" type="button" data-loading-text="" aria-label="Recargar">
+                <svg class="btn__icon-svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <path d="M3 12a9 9 0 0 1 15-6.7L21 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M21 3v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12a9 9 0 0 1-15 6.7L3 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M3 21v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="btn__label">Recargar</span>
+            </button>
+        </section>
+
+        <!-- RESULTS -->
+        <section
+            class="results"
+            id="selections"
+            aria-live="polite"
+            aria-busy="true"
+        >
+            <header class="results__header">
+                <div class="results__title-wrap">
+                    <h2 class="results__title">Selecciones</h2>
+                    <p class="results__hint">
+                        <kbd class="kbd kbd--inline">Enter</kbd> sobre una tarjeta para ver detalle
+                    </p>
+                </div>
+                <div class="results__meta">
+                    <p class="results__count" id="resultsCount">Cargando…</p>
+                </div>
+            </header>
+
+            <!-- Loading: skeletons -->
+            <div id="loadingState" class="skeleton-grid" role="status" aria-label="Cargando selecciones"></div>
+
+            <!-- Error -->
+            <div id="errorState" class="state state--error" role="alert" hidden>
+                <div class="state__indicator"></div>
+                <h3 class="state__title">No se pudo conectar con la API</h3>
+                <p class="state__text" id="errorMessage">
+                    Verificá que el backend FastAPI esté ejecutándose en http://127.0.0.1:8000
+                </p>
+                <button class="btn btn--primary" id="retryBtn" type="button">
+                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                        <path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Reintentar
+                </button>
+            </div>
+
+            <!-- Empty (por filtros) -->
+            <div id="emptyState" class="state state--empty" hidden>
+                <div class="state__indicator"></div>
+                <h3 class="state__title">Sin resultados</h3>
+                <p class="state__text">No hay selecciones que coincidan con tu búsqueda.</p>
+                <button class="btn btn--ghost" id="clearFiltersBtn" type="button">
+                    Limpiar filtros
+                </button>
+            </div>
+
+            <!-- Empty (sin datos en API) -->
+            <div id="noDataState" class="state state--empty" hidden>
+                <div class="state__indicator"></div>
+                <h3 class="state__title">Aún no hay datos</h3>
+                <p class="state__text">
+                    La API no devolvió datos. Ejecutá el seed del backend para poblar la base de datos.
+                </p>
+            </div>
+
+            <!-- Grid (render dinámico) -->
+            <ul id="selectionsGrid" class="grid" role="list" hidden></ul>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer" id="about">
+        <div class="site-footer__inner">
+            <div>
+                <p class="site-footer__brand">World Cup API · Dashboard</p>
+                <p class="site-footer__muted">
+                    Frontend académico — HTML5 · CSS3 · JavaScript · Axios
+                </p>
+            </div>
+            <div class="site-footer__credits">
+                <span>Banderas vía</span>
+                <a href="https://flagcdn.com" target="_blank" rel="noopener">flagcdn.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTÓN VOLVER ARRIBA -->
+    <button class="back-to-top" id="backToTop" type="button" aria-label="Volver arriba" hidden>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+    <!-- TOASTS (feedback) -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- MODAL DETALLE -->
+    <div class="modal" id="detailModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal__backdrop" data-close-modal></div>
+        <article class="modal__panel" role="document">
+            <button class="modal__close" type="button" data-close-modal aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal__flag">
+                <img id="modalFlag" alt="" />
+            </div>
+            <div class="modal__body">
+                <span class="modal__badge" id="modalConfederation">—</span>
+                <h3 class="modal__title" id="modalTitle">—</h3>
+                <dl class="modal__stats">
+                    <div class="modal__stat">
+                        <dt>Capitán</dt>
+                        <dd id="modalCaptain">—</dd>
+                    </div>
+                    <div class="modal__stat">
+                        <dt>Director Técnico</dt>
+                        <dd id="modalCoach">—</dd>
+                    </div>
+                    <div class="modal__stat">
+                        <dt>Mundiales ganados</dt>
+                        <dd id="modalCups">—</dd>
+                    </div>
+                </dl>
+            </div>
+        </article>
+    </div>
+
+    <!-- Hint de atajos (oculto por defecto, visible con ?) -->
+    <div class="shortcuts-hint" id="shortcutsHint" hidden>
+        <div class="shortcuts-hint__inner">
+            <h4>Atajos de teclado</h4>
+            <dl>
+                <div><dt><kbd>/</kbd></dt><dd>Buscar</dd></div>
+                <div><dt><kbd>R</kbd></dt><dd>Recargar</dd></div>
+                <div><dt><kbd>Esc</kbd></dt><dd>Cerrar modal/menú</dd></div>
+                <div><dt><kbd>Enter</kbd></dt><dd>Abrir detalle</dd></div>
+                <div><dt><kbd>?</kbd></dt><dd>Mostrar este panel</dd></div>
+            </dl>
+            <button class="btn btn--ghost btn--small" id="closeShortcuts" type="button">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Axios (única dependencia) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
