@@ -14,13 +14,13 @@ from src.selections.application.update_selection import (
 )
 
 from src.selections.application.delete_selection import DeleteSelection
-from src.selections.infraestructure.repositories import InMemorySelectionRepository
+from src.selections.infraestructure.repositories import SQLModelSelectionRepository
 
 
 router = APIRouter(prefix="/selections")
 
 
-repository = InMemorySelectionRepository()
+repository = SQLModelSelectionRepository()
 
 
 class SelectionPayload(BaseModel):
