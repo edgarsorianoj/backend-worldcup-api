@@ -257,48 +257,17 @@ axios.get('http://127.0.0.1:8000/selections')
   .catch(error => console.error(error));
 ```
 
-### 7. Atajos de teclado del frontend
-| Tecla | Acción |
-|---|---|
-| `/` | Enfocar la búsqueda |
-| `R` | Recargar selecciones |
-| `Enter` / `Espacio` (sobre tarjeta) | Abrir detalle |
-| `Esc` | Cerrar modal, menú móvil o panel de atajos |
-| `?` | Mostrar panel de atajos |
+##  Comandos útiles
+# Arrancar el servidor
+fastapi dev
+fastapi dev --host 0.0.0.0 --port 8000
 
----
+# Tests
+pytest -v           # 19 tests
+pytest -q           # modo silencioso
 
-## 📸 Capturas de pantalla
-
-> ⚠️ **No es posible generar capturas en este entorno.** A continuación, la lista de pantallas que **te recomiendo capturar** manualmente para incluirlas en el README. Para tomarlas, levantá el proyecto (backend + frontend) y hacé las acciones indicadas.
-
-### Capturas sugeridas
-
-| # | Pantalla | Qué deberías capturar |
-|---|---|---|
-| 1 | **Hero y métricas** | Vista inicial con el título "Selecciones clasificadas", el badge "En vivo · Temporada 2026" y los 4 stats (Selecciones / Confederaciones / Campeones / Actualizado). |
-| 2 | **Grid de tarjetas cargado** | Vista con las 48 tarjetas renderizadas mostrando banderas, confederación, capitán, DT y trofeos. Idealmente con la primera tarjeta en hover para mostrar el efecto de elevación + flecha. |
-| 3 | **Búsqueda con resultados** | Escribí "bra" en el buscador para filtrar Brasil (y cualquier coincidencia), y que se vea el chip "bra" + el contador "1 / 48". |
-| 4 | **Filtro por confederación** | Seleccioná "UEFA" en el dropdown y capturá el grid filtrado con el chip "UEFA" visible arriba. |
-| 5 | **Tarjeta en hover** | Acercate a una tarjeta con el mouse para mostrar la flecha cyan apareciendo y el ligero translateY. |
-| 6 | **Modal de detalle** | Hacé click en cualquier tarjeta (o presioná Enter) y capturá el modal con bandera, capitán, DT y mundiales ganados. |
-| 7 | **Estado de error** | Apagá el backend (`Ctrl+C` en la terminal) y hacé click en "Reintentar" para capturar la pantalla de error con borde rojo y mensaje. |
-| 8 | **Estado de carga (skeleton)** | Con el backend apagado o con throttling de red, recargá la página para capturar los skeletons con shimmer antes de que aparezca el error. |
-| 9 | **Toast de feedback** | Capturá un toast (por ejemplo, después de "Recargar" exitoso) deslizándose desde la esquina inferior derecha. |
-| 10 | **Panel de atajos** | Pulsá `?` y capturá el panel superpuesto con los atajos. |
-| 11 | **Vista móvil** | Redimensioná la ventana a ~400px de ancho o usá las DevTools (F12 → modo responsive) y capturá: menú hamburguesa abierto, grid en una columna, stats en columna. |
-| 12 | **Backend Swagger** | Visitá `http://127.0.0.1:8000/docs` y capturá la documentación interactiva de FastAPI. |
-
-### Cómo incluir las capturas
-
-1. Guardá las imágenes en una carpeta `docs/screenshots/` en la raíz del proyecto.
-2. Usá un nombre descriptivo: `01-hero.png`, `02-grid-completo.png`, etc.
-3. Insertalas en este README con Markdown:
-
-```markdown
-![Hero y métricas](docs/screenshots/01-hero.png)
-![Grid completo](docs/screenshots/02-grid-completo.png)
-```
+# Borrar la BD para empezar de cero
+rm selections.db
 
 ---
 
@@ -320,6 +289,25 @@ axios.get('http://127.0.0.1:8000/selections')
 | `DELETE` | `/selections/{id}` | Elimina una selección | 204 / 404 |
 
 ---
+
+# Flujo de una petición (POST/selections/)
+Cliente (curl / frontend)
+        │
+        ▼
+  FastAPI Router  (api.py)
+        │  JSON → Pydantic (SelectionPayload)
+        ▼
+  Caso de uso  (create_selection.py)
+        │  
+        ▼
+  Repositorio  (SQLModelSelectionRepository)
+        │  
+        ▼
+   Base de datos  (selections.db)
+        │
+        ▼
+  Response JSON
+
 
 ### `GET /`
 Devuelve un mensaje de bienvenida.
@@ -533,22 +521,14 @@ Los tests viven en `backend/src/selections/test/` y cubren los casos de uso de l
 
 ---
 
-## 🗺️ Roadmap / posibles mejoras
+##  Comandos útiles
+# Arrancar el servidor
+fastapi dev
+fastapi dev --host 0.0.0.0 --port 8000
 
-- [ ] Endpoint adicional `GET /selections/confederation/{confederation}` para filtrar por confederación desde el backend (actualmente el filtrado se hace en el frontend).
-- [ ] Endpoint adicional `GET /selections/country/{country}` para búsqueda por país.
-- [ ] Paginación (`?limit=&offset=`) cuando crezca el dataset.
-- [ ] Autenticación con JWT para `POST`, `PUT` y `DELETE`.
-- [ ] Migración de SQLite a PostgreSQL para producción.
-- [ ] Modo claro (light mode) con `prefers-color-scheme` (la paleta ya está invertida y lista para activarse desde CSS).
-- [ ] Internacionalización (i18n) del frontend.
+# Tests
+pytest -v           # 19 tests
+pytest -q           # modo silencioso
 
----
-
-## 📄 Licencia
-
-Proyecto académico sin licencia específica. Usar libremente con fines educativos.
-
----
-
-**Hecho con ⚽ para la comunidad académica.**
+# Borrar la BD para empezar de cero
+rm selections.db
